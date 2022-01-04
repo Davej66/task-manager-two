@@ -35,6 +35,7 @@ def search():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        is_admin = "on" if request.form.get("is_urgent") else "off"
         # check if username already exists in db
         existing_user = mongo.db.users.find_one(
             {"username": request.form.get("username").lower()})
@@ -45,6 +46,9 @@ def register():
 
         register = {
             "username": request.form.get("username").lower(),
+            "email": request.form.get("email").lower(),
+            "is_admin": is_admin,
+            "admin": "no",
             "password": generate_password_hash(request.form.get("password"))
         }
         mongo.db.users.insert_one(register)
