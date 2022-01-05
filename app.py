@@ -24,7 +24,7 @@ def get_tasks():
     tasks = list(mongo.db.tasks.find())
     return render_template("tasks.html", tasks=tasks)
 
-  
+
 @app.route("/search", methods=["GET", "POST"])
 def search():
     query = request.form.get("query")
@@ -118,8 +118,11 @@ def add_task():
         task = {
             "category_name": request.form.get("category_name"),
             "book_name": request.form.get("book_name"),
+            "book_author": request.form.get("book_author"),
             "book_description": request.form.get("book_description"),
             "is_bseller": is_bseller,
+            "book_pages": request.form.get("book_pages"),
+            "book_isbn": request.form.get("book_isbn"),
             "created_by": session["user"]
         }
         mongo.db.tasks.insert_one(task)
@@ -195,6 +198,13 @@ def delete_category(category_id):
     mongo.db.categories.remove({"_id": ObjectId(category_id)})
     flash("Category Successfully Deleted")
     return redirect(url_for("get_categories"))
+
+
+@app.route("/get_book/<task_id>", methods=["GET", "POST"])
+def get_book(task_id): 
+    task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
+    categories = mongo.db.categories.find().sort("category_name", 1)
+    return render_template("get_book.html", task=task, categories=categories)
     
 
 if __name__ == "__main__":
