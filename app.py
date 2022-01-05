@@ -137,7 +137,7 @@ def add_task():
 def edit_task(task_id):
     if request.method == "POST":
         is_bseller = "on" if request.form.get("is_bseller") else "off"
-        task = {
+        submit = {
             "category_name": request.form.get("category_name"),
             "book_name": request.form.get("book_name"),
             "book_author": request.form.get("book_author"),
