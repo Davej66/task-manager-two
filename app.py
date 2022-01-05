@@ -92,12 +92,13 @@ def login():
 
 @app.route("/profile/<username>", methods=["GET", "POST"])
 def profile(username):
+    tasks = list(mongo.db.tasks.find())
     # grab the session user's username from db
     username = mongo.db.users.find_one(
         {"username": session["user"]})["username"]
 
     if session["user"]:
-        return render_template("profile.html", username=username)
+        return render_template("profile.html", username=username, tasks=tasks)
 
     return redirect(url_for("login"))
 
@@ -113,13 +114,12 @@ def logout():
 @app.route("/add_task", methods=["GET", "POST"])
 def add_task():
     if request.method == "POST":
-        is_urgent = "on" if request.form.get("is_urgent") else "off"
+        is_bseller = "on" if request.form.get("is_bseller") else "off"
         task = {
             "category_name": request.form.get("category_name"),
-            "task_name": request.form.get("task_name"),
-            "task_description": request.form.get("task_description"),
-            "is_urgent": is_urgent,
-            "due_date": request.form.get("due_date"),
+            "book_name": request.form.get("book_name"),
+            "book_description": request.form.get("book_description"),
+            "is_bseller": is_bseller,
             "created_by": session["user"]
         }
         mongo.db.tasks.insert_one(task)
